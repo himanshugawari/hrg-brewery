@@ -1,15 +1,17 @@
 package com.gawari._himanshu.springframework.hrgbrewery.web.service;
 
-import java.util.UUID;
+import java.util.List;
 
 import com.gawari._himanshu.springframework.hrgbrewery.web.model.BeerDto;
 
 public interface BeerService {
-	BeerDto getBeerById(UUID beerId);
+	BeerDto getBeerById(Long beerId);
 
 	BeerDto saveNewBeer(BeerDto beerDto);
 
-	void updateBeer(UUID beerId, BeerDto beerDto);
+	void updateBeer(Long beerId, BeerDto beerDto);
 
-	void deleteById(UUID beerId);
+	void deleteById(Long beerId);
+	
+	List<BeerDto> findAll(); 
 }

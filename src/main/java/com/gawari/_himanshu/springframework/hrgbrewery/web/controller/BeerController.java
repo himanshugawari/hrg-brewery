@@ -1,6 +1,6 @@
 package com.gawari._himanshu.springframework.hrgbrewery.web.controller;
 
-import java.util.UUID;
+import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gawari._himanshu.springframework.hrgbrewery.web.model.BeerDto;
@@ -41,8 +40,14 @@ public class BeerController {
 		return "Hello World, " + name;
 	}
 
+	@GetMapping(value = "/all")
+	public List<BeerDto> getAllBeer() {
+		// return new ResponseEntity<>(BeerDto.builder().build(), HttpStatus.OK);
+		return beerService.findAll();
+	}
+
 	@GetMapping(value = "/{beerId}")
-	public ResponseEntity<BeerDto> getBeerById(@PathVariable("beerId") UUID beerId) {
+	public ResponseEntity<BeerDto> getBeerById(@PathVariable("beerId") Long beerId) {
 		// return new ResponseEntity<>(BeerDto.builder().build(), HttpStatus.OK);
 		return new ResponseEntity<BeerDto>(beerService.getBeerById(beerId), HttpStatus.OK);
 	}
@@ -56,14 +61,17 @@ public class BeerController {
 	}
 
 	@PutMapping(value = "/{beerId}")
-	public ResponseEntity<BeerDto> handleUpdate(@PathVariable("beerId") UUID beerId, @RequestBody BeerDto beerDto) {
+	public ResponseEntity<BeerDto> handleUpdate(@PathVariable("beerId") Long beerId, @RequestBody BeerDto beerDto) {
 		beerService.updateBeer(beerId, beerDto);
-		return new ResponseEntity<BeerDto>(HttpStatus.NO_CONTENT);
+		HttpHeaders header = new HttpHeaders();
+		header.add("Location", "/api/v1/beer/" + beerId.toString());
+		return new ResponseEntity<BeerDto>(header, HttpStatus.ACCEPTED);
 	}
-	
+
 	@DeleteMapping(value = "/{beerId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBeer(@PathVariable("beerId") UUID beerId){
-        beerService.deleteById(beerId);
-    }
+	// @ResponseStatus(HttpStatus.NO_CONTENT)
+	public ResponseEntity<BeerDto> deleteBeer(@PathVariable("beerId") Long beerId) {
+		beerService.deleteById(beerId);
+		return new ResponseEntity<BeerDto>(HttpStatus.ACCEPTED);
+	}
 }
